@@ -1,9 +1,10 @@
 ---
 
-# SOAR-Flow
+# 🚀 SOAR-Flow  
 
 ## 📌 Project Description  
-This project demonstrates how to integrate **Shuffle SOAR** with **Wazuh SIEM** and **TheHive** to automate incident response. The automation includes:  
+This project demonstrates how to integrate **Shuffle SOAR** with **Wazuh SIEM** and **TheHive** to automate incident response.
+
 ✅ **Receiving security alerts** from Wazuh.  
 ✅ **Enriching alerts** using external threat intelligence (VirusTotal, AbuseIPDB).  
 ✅ **Creating an incident** in TheHive for case management.  

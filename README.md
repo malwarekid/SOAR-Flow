@@ -138,7 +138,7 @@ cd Shuffle
 # Build and run Shuffle with Docker Compose
 sudo docker-compose up -d
 ```
-# Access Shuffle Web UI at http://<your-ip>:3001
+Access Shuffle Web UI at http://YOUR-IP:3001
 
 ### **4️⃣ Create a Discord Webhook**  
 1. Go to your **Discord Server** → **Settings** → **Integrations** → **Webhooks**  

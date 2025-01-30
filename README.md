@@ -29,35 +29,233 @@ By implementing this SOAR workflow, you can **automate security operations**, re
 
 ## 🛠️ Installation & Setup  
 
+### VM-1 for Wazuh and TheHive 
+
+**Specifications**
+
+- **RAM:** 12GB+
+- **HDD:** 60GB+
+- **OS:** Ubuntu 24.04 LTS
+
 ### **1️⃣ Install Wazuh SIEM**  
 Follow the official Wazuh installation guide:  
 🔗 [Wazuh Installation Guide](https://documentation.wazuh.com/current/installation-guide/index.html)  
+
+1. **Update and Upgrade:**
+   ```bash
+   apt-get update && apt-get upgrade
+   ```
+
+2. **Install Wazuh 4.10:**
+   ```bash
+   curl -sO https://packages.wazuh.com/4.10/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
+   ```
+
+3. **Extract Wazuh Credentials:**
+   ```bash
+   sudo tar -xvf wazuh-install-files.tar
+   ```
+
+4. **Wazuh Dashboard Credentials:**
+   - **User:** admin
+   - **Password:** ***************
+
+5. **Access Wazuh Dashboard:**
+   - Open your browser and go to: `https://<Public IP of Wazuh>`
 
 ### **2️⃣ Install TheHive**  
 Follow the official documentation for installing TheHive:  
 🔗 [TheHive Installation Guide](https://docs.strangebee.com/thehive/installation/)  
 
+1. **Install Dependencies:**
+   ```bash
+   apt install wget gnupg apt-transport-https git ca-certificates ca-certificates-java curl  software-properties-common python3-pip lsb-release
+   ```
+
+2. **Install Java:**
+   ```bash
+   wget -qO- https://apt.corretto.aws/corretto.key | sudo gpg --dearmor  -o /usr/share/keyrings/corretto.gpg
+   echo "deb [signed-by=/usr/share/keyrings/corretto.gpg] https://apt.corretto.aws stable main" |  sudo tee -a /etc/apt/sources.list.d/corretto.sources.list
+   sudo apt update
+   sudo apt install java-common java-11-amazon-corretto-jdk
+   echo JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto" | sudo tee -a /etc/environment 
+   export JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"
+   ```
+
+3. **Install Cassandra:**
+   ```bash
+   wget -qO -  https://downloads.apache.org/cassandra/KEYS | sudo gpg --dearmor  -o /usr/share/keyrings/cassandra-archive.gpg
+   echo "deb [signed-by=/usr/share/keyrings/cassandra-archive.gpg] https://debian.cassandra.apache.org 40x main" |  sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+   sudo apt update
+   sudo apt install cassandra
+   ```
+
+4. **Install ElasticSearch:**
+   ```bash
+   wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch |  sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+   sudo apt-get install apt-transport-https
+   echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main" |  sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+   sudo apt update
+   sudo apt install elasticsearch
+   ```
+
+5. **Install TheHive:**
+   ```bash
+   wget -O- https://archives.strangebee.com/keys/strangebee.gpg | sudo gpg --dearmor -o /usr/share/keyrings/strangebee-archive-keyring.gpg
+   echo 'deb [signed-by=/usr/share/keyrings/strangebee-archive-keyring.gpg] https://deb.strangebee.com thehive-5.2 main' | sudo tee -a /etc/apt/sources.list.d/strangebee.list
+   sudo apt-get update
+   sudo apt-get install -y thehive
+   ```
+
+6. **Default Credentials for TheHive:**
+   - **Port:** 9000
+   - **Credentials:** 'admin@thehive.local' with a password of 'secret'
+
+### VM-2 for Shuffle  
+
+**Specifications**
+
+- **RAM:** 4GB+
+- **HDD:** 40GB+
+- **OS:** Ubuntu 24.04 LTS
+
 ### **3️⃣ Install Shuffle SOAR**  
 Run the following commands to install **Shuffle SOAR** on Ubuntu:  
+🔗 [Shuffle Installation Guide](https://shuffler.io/docs)  
+
 ```bash
 # Install Docker if not already installed
 sudo apt update && sudo apt install -y docker.io docker-compose
 
+# Enable and start Docker
+sudo systemctl enable docker
+sudo systemctl start docker
+
 # Clone the Shuffle repository
-git clone https://github.com/frikky/Shuffle.git
+git clone https://github.com/Shuffle/Shuffle.git
 cd Shuffle
 
-# Run the installation script
-sudo ./install.sh
+# Build and run Shuffle with Docker Compose
+sudo docker-compose up -d
 ```
-# Access Shuffle Web UI at http://<your-ip>:5001
-
-🔗 [Shuffle Installation Guide](https://shuffler.io/docs)  
+# Access Shuffle Web UI at http://<your-ip>:3001
 
 ### **4️⃣ Create a Discord Webhook**  
 1. Go to your **Discord Server** → **Settings** → **Integrations** → **Webhooks**  
 2. Click **New Webhook** → Name it **SOC Alerts**  
 3. Copy the **Webhook URL** (you will need it later)  
+
+---
+
+## Configuration for TheHive
+
+### Configure Cassandra
+
+1. **Edit Cassandra Config File:**
+   ```bash
+   nano /etc/cassandra/cassandra.yaml
+   ```
+
+2. **Change Cluster Name:**
+   ```yaml
+   cluster_name: 'SOAR-Flow'
+   ```
+
+3. **Update Listen Address:**
+   ```yaml
+   listen_address: <public IP of TheHive>
+   ```
+
+4. **Update RPC Address:**
+   ```yaml
+   rpc_address: <public IP of TheHive>
+   ```
+
+5. **Update Seed Provider:**
+   ```yaml
+   - seeds: "<Public IP Of the TheHive>:7000"
+   ```
+
+6. **Stop Cassandra Service:**
+   ```bash
+   systemctl stop cassandra.service
+   ```
+
+7. **Remove Old Files:**
+   ```bash
+   rm -rf /var/lib/cassandra/*
+   ```
+
+8. **Restart Cassandra Service:**
+   ```bash
+   systemctl start cassandra.service
+   ```
+
+### Configure ElasticSearch
+
+1. **Edit ElasticSearch Config File:**
+   ```bash
+   nano /etc/elasticsearch/elasticsearch.yml
+   ```
+
+2. **Update Cluster Name and Host:**
+   ```yaml
+   cluster.name: thehive
+   node.name: node-1
+   network.host: <Public IP of your TheHive instance>
+   http.port: 9200
+   discovery.seed_hosts: ["127.0.0.1"]
+   cluster.initial_master_nodes: ["node-1"]
+   ```
+
+3. **Start ElasticSearch Service:**
+   ```bash
+   systemctl start elasticsearch
+   systemctl enable elasticsearch
+   systemctl status elasticsearch
+   ```
+
+## Configure TheHive
+
+1. **Ensure Proper Ownership:**
+   ```bash
+   ls -la /opt/thp
+   chown -R thehive:thehive /opt/thp
+   ```
+
+2. **Edit TheHive Configuration File:**
+   ```bash
+   nano /etc/thehive/application.conf
+   ```
+
+3. **Update Database and Index Configuration:**
+   ```conf
+   db.janusgraph {
+     storage {
+       backend = cql
+       hostname = ["<Public IP of TheHive>"]
+       cql {
+         cluster-name = SOAR-Flow
+         keyspace = thehive
+       }
+     }
+   }
+
+   index.search {
+     backend = elasticsearch
+     hostname = ["<Public IP of TheHive>"]
+     index-name = thehive
+   }
+
+   application.baseUrl = "http://<Public IP of TheHive>:9000"
+   ```
+
+4. **Start TheHive Services:**
+   ```bash
+   systemctl start thehive
+   systemctl enable thehive
+   systemctl status thehive
+   ```
 
 ---
 

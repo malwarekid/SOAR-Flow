@@ -63,6 +63,9 @@ Follow the official Wazuh installation guide:
 5. **Access Wazuh Dashboard:**
    - Open your browser and go to: `https://<Public IP of Wazuh>`
 
+![Wazuh](https://github.com/user-attachments/assets/1ab85349-4e1f-4916-a363-ed0a1c8030c6)
+
+
 ### **2️⃣ Install TheHive**  
 Follow the official documentation for installing TheHive:  
 🔗 [TheHive Installation Guide](https://docs.strangebee.com/thehive/installation/)  
@@ -111,6 +114,9 @@ Follow the official documentation for installing TheHive:
    - **Port:** 9000
    - **Credentials:** 'admin@thehive.local' with a password of 'secret'
 
+![TheHive](https://github.com/user-attachments/assets/22705378-3dae-449f-926c-0c25109a6a40)
+
+
 ### VM-2 for Shuffle  
 
 **Specifications**
@@ -139,6 +145,9 @@ cd Shuffle
 sudo docker-compose up -d
 ```
 Access Shuffle Web UI at http://YOUR-IP:3001
+
+![Shuffle](https://github.com/user-attachments/assets/287a3125-11ba-48d7-be7b-f0e7a35890df)
+
 
 ### **4️⃣ Create a Discord Webhook**  
 1. Go to your **Discord Server** → **Settings** → **Integrations** → **Webhooks**  
@@ -336,7 +345,7 @@ Example payload:
 ```
 
 ✅ **Discord Alert:**  
-![Discord Alert Example](https://i.imgur.com/example.png)  
+![Discord Alert Example](https://github.com/user-attachments/assets/a09381ef-287a-4878-b0e6-319efa6d7162)
 
 ---
 

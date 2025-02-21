@@ -363,7 +363,7 @@ This project is licensed under the **MIT License**.
 
 ## 📬 Contact  
 👤 **Author:** [Nitin Sharma](https://github.com/malwarekid)  
-💻 **GitHub:** [github.com/malwarekid](https://github.com/malwarekid)  
-📧 **Email:** malwarekid@protonmail.com  
+💻 **Instagram:** [Malwarekid](https://instagram.com/malwarekid)  
+📧 **LinkedIn:** [Connect](https://www.linkedin.com/in/-nitinsharma/)  
 
 ---
